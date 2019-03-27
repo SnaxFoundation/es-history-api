@@ -1,0 +1,89 @@
+{
+  "index_patterns": ["action_traces*"],
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "refresh_interval": "3s",
+      "number_of_replicas": 0
+    },
+    "index.codec": "best_compression"
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "trx_id": {
+          "type": "keyword"
+        },
+        "producer_block_id": {
+          "type": "keyword"
+        },
+        "elapsed": {
+          "type": "long"
+        },
+        "context_free": {
+          "type": "boolean"
+        },
+        "console": {
+          "type": "text"
+        },
+        "block_num": {
+          "type": "long"
+        },
+        "block_time": {
+          "type": "date"
+        },
+        "receipt": {
+          "type": "nested",
+          "properties": {
+            "receiver": {
+              "type": "keyword"
+            },
+            "act_digest": {
+              "type": "keyword"
+            },
+            "global_sequence": {
+              "type": "long"
+            },
+            "recv_sequence": {
+              "type": "long"
+            },
+            "auth_sequence": {
+              "enabled": false
+            }
+          }
+        },
+        "act": {
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "keyword"
+            },
+            "authorization": {
+              "type": "nested",
+              "properties": {
+                "actor": {
+                  "type": "keyword"
+                },
+                "permission": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "account": {
+              "type": "keyword"
+            },
+            "hex_data": {
+              "enabled": false
+            },
+            "data": {
+              "type": "text"
+            }
+          }
+        },
+        "account_ram_deltas": {
+          "enabled": false
+        }
+      }
+    }
+  }
+}

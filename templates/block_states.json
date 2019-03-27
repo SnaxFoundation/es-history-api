@@ -1,0 +1,69 @@
+{
+  "index_patterns": [
+    "block_states*"
+  ],
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "refresh_interval": "3s",
+      "number_of_replicas": 0,
+      "sort.field" : "block_num",
+      "sort.order" : "desc"
+    },
+    "index.codec": "best_compression"
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "block_id": {
+          "type": "keyword"
+        },
+        "block_num": {
+          "type": "long"
+        },
+        "irreversible": {
+          "type": "boolean"
+        },
+        "validated": {
+          "type": "boolean"
+        },
+        "block": {
+          "type": "object",
+          "enabled": false
+        },
+        "confirm_count": {
+          "type": "object",
+          "enabled": false
+        },
+        "confirmations": {
+          "type": "object",
+          "enabled": false
+        },
+        "producer_to_last_implied_irb": {
+          "type": "object",
+          "enabled": false
+        },
+        "producer_to_last_produced": {
+          "type": "object",
+          "enabled": false
+        },
+        "blockroot_merkle": {
+          "type": "object",
+          "enabled": false
+        },
+        "active_schedule": {
+          "type": "object",
+          "enabled": false
+        },
+        "pending_schedule": {
+          "type": "object",
+          "enabled": false
+        },
+        "header.header_extensions": {
+          "type": "object",
+          "enabled": false
+        }
+      }
+    }
+  }
+}

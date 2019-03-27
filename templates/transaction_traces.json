@@ -1,0 +1,61 @@
+{
+  "index_patterns" : ["transaction_traces*"],
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "refresh_interval": "3s",
+      "number_of_replicas": 0,
+      "sort.field" : "block_num",
+      "sort.order" : "desc"
+    },
+    "index.codec": "best_compression"
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "action_traces": {
+          "type": "object",
+          "enabled": false
+        },
+        "block_num": {
+          "type": "long"
+        },
+        "block_time": {
+          "type": "date"
+        },
+        "elapsed": {
+          "type": "long"
+        },
+        "except": {
+          "type": "object",
+          "enabled": false
+        },
+        "failed_dtrx_trace": {
+          "type": "object",
+          "enabled": false
+        },
+        "id": {
+          "type": "keyword"
+        },
+        "net_usage": {
+          "type": "long"
+        },
+        "producer_block_id": {
+          "type": "keyword"
+        },
+        "receipt.cpu_usage_us": {
+            "type": "long"
+        },
+        "receipt.net_usage_words": {
+            "type": "long"
+        },
+        "receipt.status": {
+            "type": "keyword"
+        },
+        "scheduled": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

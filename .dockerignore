@@ -1,0 +1,7 @@
+.git
+.drone.yml
+*.md
+Dockerfile
+docker-compose*.yml
+*.sqlite
+*.env*

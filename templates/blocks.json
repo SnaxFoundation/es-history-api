@@ -1,0 +1,71 @@
+{
+  "index_patterns" : ["blocks*"],
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "refresh_interval": "3s",
+      "number_of_replicas": 0,
+      "sort.field" : "block_num",
+      "sort.order" : "desc"
+    },
+    "index.codec": "best_compression"
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "action_mroot": {
+          "type": "keyword"
+        },
+        "block_id": {
+          "type": "keyword"
+        },
+        "block_num": {
+          "type": "long"
+        },
+        "confirmed": {
+          "type": "long"
+        },
+        "createAt": {
+          "type": "date"
+        },
+        "irreversible": {
+          "type": "boolean"
+        },
+        "new_producers.producers.block_signing_key": {
+            "type": "keyword"
+        },
+        "new_producers.producers.producer_name": {
+            "type": "keyword"
+        },
+        "new_producers.version": {
+            "type": "long"
+        },
+        "previous": {
+          "type": "keyword"
+        },
+        "producer": {
+          "type": "keyword"
+        },
+        "producer_signature": {
+          "type": "keyword"
+        },
+        "schedule_version": {
+          "type": "long"
+        },
+        "timestamp": {
+          "type": "date"
+        },
+        "transaction_mroot": {
+          "type": "keyword"
+        },
+        "transactions": {
+          "type": "object",
+          "enabled": false
+        },
+        "validated": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

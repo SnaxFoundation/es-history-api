@@ -1,0 +1,73 @@
+{
+  "index_patterns" : ["transactions*"],
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "refresh_interval": "3s",
+      "number_of_replicas": 0,
+      "sort.field" : "block_num",
+      "sort.order" : "desc"
+    },
+    "index.codec": "best_compression"
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "accepted": {
+          "type": "boolean"
+        },
+        "actions": {
+          "enabled": false
+        },
+        "block_id": {
+          "type": "keyword"
+        },
+        "block_num": {
+          "type": "long"
+        },
+        "context_free_actions": {
+          "enabled": false
+        },
+        "context_free_data": {
+          "enabled": false
+        },
+        "delay_sec": {
+          "type": "long"
+        },
+        "expiration": {
+          "type": "date"
+        },
+        "implicit": {
+          "type": "boolean"
+        },
+        "irreversible": {
+          "type": "boolean"
+        },
+        "max_cpu_usage_ms": {
+          "type": "long"
+        },
+        "max_net_usage_words": {
+          "type": "long"
+        },
+        "ref_block_num": {
+          "type": "long"
+        },
+        "ref_block_prefix": {
+          "type": "long"
+        },
+        "scheduled": {
+          "type": "boolean"
+        },
+        "signatures": {
+          "type": "keyword"
+        },
+        "signing_keys": {
+          "type": "keyword"
+        },
+        "trx_id": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
