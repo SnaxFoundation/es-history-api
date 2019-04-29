@@ -1,10 +1,16 @@
+env:
+  global:
+  - REPO=snaxfoundation/es-history-api
 language: node_js
 node_js:
-- "10"
+- "11"
 
-script:
-#- yarn install
-#- yarn test
+services:
+- docker
 
 before_install:
+- if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then exit 0;fi
+- docker build -t $REPO:$TRAVIS_BRANCH .
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker push $REPO:$TRAVIS_BRANCH
 - curl --write-out '%{http_code}' --silent --output /dev/null -X POST -F token=$TOKEN -F ref=$TRAVIS_BRANCH -F "variables[BRANCH]=$TRAVIS_PULL_REQUEST_BRANCH" -F "variables[PULL_REQUEST]=$TRAVIS_PULL_REQUEST" $URL
