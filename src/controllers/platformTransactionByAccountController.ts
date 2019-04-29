@@ -37,9 +37,12 @@ export class PlatformTransactionByAccountController {
         };
       });
 
+      const hasMore = data.length < elasticResponse.hits.total;
+
       const result = {
         actions: data,
         total: elasticResponse.hits.total,
+        hasMore,
       };
 
       res.send(result);
