@@ -22,6 +22,8 @@ export class TransactionByAccountController {
         };
       });
 
+      const hasMore = data.length < elasticResponse.hits.total;
+
       // as soon as the only only way to distinguish social trx and snax trx is memo
       // and we can't use it. We should manually remove dublicates
 
@@ -45,6 +47,7 @@ export class TransactionByAccountController {
       const result = {
         actions: finalData,
         total: finalData.length,
+        hasMore: hasMore,
       };
 
       res.send(result);
