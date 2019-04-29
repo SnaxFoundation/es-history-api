@@ -4,9 +4,7 @@
     "index": {
       "number_of_shards": 1,
       "refresh_interval": "3s",
-      "number_of_replicas": 0,
-      "sort.field" : "block_num",
-      "sort.order" : "desc"
+      "number_of_replicas": 0
     },
     "index.codec": "best_compression"
   },
@@ -17,7 +15,50 @@
           "type": "boolean"
         },
         "actions": {
-          "enabled": false
+          "type": "nested",
+          "properties": {
+            "account": {
+              "type": "keyword"
+            },
+            "authorization": {
+              "type": "nested",
+              "properties": {
+                "actor": {
+                  "type": "keyword"
+                },
+                "permission": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "data": {
+              "type": "nested",
+              "properties": {
+                "from": {
+                  "type": "keyword"
+                },
+                "to": {
+                  "type": "keyword"
+                },
+                "amount": {
+                  "type": "text"
+                },
+                "quantity": {
+                  "type": "text"
+                },
+                "memo": {
+                  "type": "text"
+                }
+              }
+            },
+            "hex_data": {
+              "type": "object",
+              "enabled": false
+            },
+            "name": {
+              "type": "keyword"
+            }
+          }
         },
         "block_id": {
           "type": "keyword"
@@ -26,9 +67,11 @@
           "type": "long"
         },
         "context_free_actions": {
+          "type": "object",
           "enabled": false
         },
         "context_free_data": {
+          "type": "object",
           "enabled": false
         },
         "delay_sec": {

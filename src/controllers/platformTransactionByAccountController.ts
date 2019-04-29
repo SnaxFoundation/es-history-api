@@ -75,7 +75,7 @@ export class PlatformTransactionByAccountController {
           q = q.orQuery('nested', { path: 'act' }, q => {
             return q
               .query('match_phrase', 'act.data', `"to": ${userId}`)
-              .query('match', 'act.name', 'transfertou')
+              .query('match', 'act.name', 'transfersoc')
               .query('match', 'act.account', platformId);
           });
 
@@ -119,6 +119,7 @@ export class PlatformTransactionByAccountController {
       });
 
     return {
+      index: 'action_traces',
       body: query.build(),
     };
   }

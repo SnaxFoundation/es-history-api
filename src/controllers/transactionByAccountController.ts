@@ -22,9 +22,29 @@ export class TransactionByAccountController {
         };
       });
 
+      // as soon as the only only way to distinguish social trx and snax trx is memo
+      // and we can't use it. We should manually remove dublicates
+
+      const socialTrxIds = data
+        .filter(trxDoc => trxDoc.action_trace.receipt.receiver === 'p.twitter')
+        .map(trxDoc => trxDoc.action_trace.trx_id);
+
+      const finalData = data.filter(trxDoc => {
+        const trxId = trxDoc.action_trace.trx_id;
+
+        if (
+          socialTrxIds.includes(trxId) &&
+          trxDoc.action_trace.receipt.receiver !== 'p.twitter'
+        ) {
+          return;
+        } else {
+          return trxId;
+        }
+      });
+
       const result = {
-        actions: data,
-        total: elasticResponse.hits.total,
+        actions: finalData,
+        total: finalData.length,
       };
 
       res.send(result);
@@ -63,14 +83,14 @@ export class TransactionByAccountController {
             q = q.orQuery('nested', { path: 'act' }, q => {
               return q
                 .query('match_phrase', 'act.data', `"to": ${userId}`)
-                .query('match', 'act.name', 'transfertou')
+                .query('match', 'act.name', 'transfersoc')
                 .query('match', 'act.account', platformId);
             });
 
             q = q.orQuery('nested', { path: 'act' }, q => {
               return q
                 .query('match_phrase', 'act.data', `"from": ${account_name}`)
-                .query('match', 'act.name', 'transfertou')
+                .query('match', 'act.name', 'transfersoc')
                 .query('match', 'act.account', platformId);
             });
           }
@@ -87,7 +107,7 @@ export class TransactionByAccountController {
                       account_name
                     );
                   })
-                  .notQuery('match_phrase', 'act.data', '"memo": "social"');
+                  .notQuery('match_phrase', 'act.data', '"to": "snax.transf"');
               })
               .query('nested', { path: 'receipt' }, q => {
                 return q.query('match', 'receipt.receiver', account_name);
@@ -103,7 +123,7 @@ export class TransactionByAccountController {
                 return q.notQuery(
                   'match_phrase',
                   'act.data',
-                  '"memo": "social"'
+                  '"to": "snax.transf"'
                 );
               });
           });
@@ -115,6 +135,7 @@ export class TransactionByAccountController {
       });
 
     return {
+      index: 'action_traces',
       body: query.build(),
     };
   }
