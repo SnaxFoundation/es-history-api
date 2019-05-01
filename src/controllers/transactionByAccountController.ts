@@ -28,7 +28,11 @@ export class TransactionByAccountController {
       // and we can't use it. We should manually remove dublicates
 
       const socialTrxIds = data
-        .filter(trxDoc => trxDoc.action_trace.receipt.receiver === 'p.twitter')
+        .filter(
+          trxDoc =>
+            trxDoc.action_trace.receipt.receiver === 'p.twitter' ||
+            trxDoc.action_trace.receipt.receiver === 'p.steemit'
+        )
         .map(trxDoc => trxDoc.action_trace.trx_id);
 
       const finalData = data.filter(trxDoc => {
@@ -36,7 +40,8 @@ export class TransactionByAccountController {
 
         if (
           socialTrxIds.includes(trxId) &&
-          trxDoc.action_trace.receipt.receiver !== 'p.twitter'
+          trxDoc.action_trace.receipt.receiver !== 'p.twitter' &&
+          trxDoc.action_trace.receipt.receiver !== 'p.steemit'
         ) {
           return;
         } else {
@@ -47,7 +52,7 @@ export class TransactionByAccountController {
       const result = {
         actions: finalData,
         total: finalData.length,
-        hasMore: hasMore,
+        hasMore,
       };
 
       res.send(result);
@@ -78,23 +83,22 @@ export class TransactionByAccountController {
 
         q = q.query('bool', q => {
           if (platform) {
-            const platformId = Object.keys(platform)[0];
-            const userId: any = Object.keys(platform).map(
-              key => platform[key].id
-            )[0];
+            Object.keys(platform).forEach(platformId => {
+              const userId = platform[platformId].id;
 
-            q = q.orQuery('nested', { path: 'act' }, q => {
-              return q
-                .query('match_phrase', 'act.data', `"to": ${userId}`)
-                .query('match', 'act.name', 'transfersoc')
-                .query('match', 'act.account', platformId);
-            });
+              q = q.orQuery('nested', { path: 'act' }, q => {
+                return q
+                  .query('match_phrase', 'act.data', `"to": ${userId}`)
+                  .query('match', 'act.name', 'transfersoc')
+                  .query('match', 'act.account', platformId);
+              });
 
-            q = q.orQuery('nested', { path: 'act' }, q => {
-              return q
-                .query('match_phrase', 'act.data', `"from": ${account_name}`)
-                .query('match', 'act.name', 'transfersoc')
-                .query('match', 'act.account', platformId);
+              q = q.orQuery('nested', { path: 'act' }, q => {
+                return q
+                  .query('match_phrase', 'act.data', `"from": ${account_name}`)
+                  .query('match', 'act.name', 'transfersoc')
+                  .query('match', 'act.account', platformId);
+              });
             });
           }
 
