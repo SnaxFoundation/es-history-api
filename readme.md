@@ -26,13 +26,14 @@ Running `index-tempate.sh` script to create or delete indice templates.
 
 ### Endpoints
 
-| resource                           | description                                             |
-| :--------------------------------- | :------------------------------------------------------ |
-| `/health`                          | used to check the server health                         |
-| `/check_elastic`                   | userd to check elastic status                           |
-| `/v1/history/get_actions`          | Returns array of actions of a given account             |
-| `/v1/history/get_transaction`      | Returns array of traces of the transaction              |
-| `/v1/history/get_platform_actions` | Returns array of actions of a given account on platform |
+| resource                             | description                                                    |
+| :----------------------------------- | :------------------------------------------------------------- |
+| `/health`                            | used to check the server health                                |
+| `/check_elastic`                     | userd to check elastic status                                  |
+| `/v1/history/get_actions`            | Returns array of actions of a given account                    |
+| `/v1/history/get_transaction`        | Returns array of traces of the transaction                     |
+| `/v1/history/get_platform_actions`   | Returns array of actions of a given account on platform        |
+| `/v1/history/get_rewards_by_account` | Returns array of reward actions of a given account on platform |
 
 ### Env
 
@@ -141,3 +142,19 @@ Example of request body:
 
 Returns json with the following properties:  
 controlled_accounts - array of accounts controlled by a requested account
+
+#### /v1/history/get_rewards_by_account
+
+Requires json body with the following properties:  
+platform - chain platform({'p.twitter': { id: USER_ID } }). This field is required
+account_name - name of the snax account. This field is not required.  
+pos - position in a list of account actions sorted by global_sequence (e.g. in chronological order). This field is not required.  
+offset - number of actions to return. This field is not required.  
+Example of request body:
+
+    {
+        "account_name": "eminem", "platform": { "p.twitter": {"id": "2314465404"} }, "pos": -1, "offset": -20
+    }
+
+Returns json with the following properties:  
+actions - array of all transfers for account
