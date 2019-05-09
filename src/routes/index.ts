@@ -6,6 +6,7 @@ import {
   HealthController,
   KeyAccountController,
   PlatformTransactionByAccountController,
+  RewardController,
   TransactionByAccountController,
   TransactionController,
 } from '../controllers';
@@ -17,6 +18,7 @@ const transactionsController = new TransactionController();
 const platformTransactionByAccountController = new PlatformTransactionByAccountController();
 const transactionByAccountController = new TransactionByAccountController();
 const keyAccountController = new KeyAccountController();
+const rewardController = new RewardController();
 
 const router = express.Router();
 
@@ -48,6 +50,11 @@ router.all(
 router.all(
   '/v1/history/get_transaction',
   transactionsController.getTransaction
+);
+
+router.all(
+  '/v1/history/get_rewards_by_account',
+  rewardController.getRewardsByAccount
 );
 
 export default router;
