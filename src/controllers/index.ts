@@ -5,3 +5,4 @@ export * from './platformTransactionByAccountController';
 export * from './transactionByAccountController';
 export * from './keyAccountController';
 export * from './controlledAccountsController';
+export * from './rewardController';
