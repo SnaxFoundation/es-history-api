@@ -135,6 +135,20 @@ export class TransactionByAccountController {
               });
           });
 
+          q.orQuery('nested', { path: 'act' }, q => {
+            return q
+              .notQuery('match', 'act.account', 'snax.token')
+              .query('nested', { path: 'act.authorization' }, q => {
+                return q.query(
+                  'match',
+                  'act.authorization.actor',
+                  account_name
+                );
+              })
+              .query('match_phrase', 'act.data', `"from": ${account_name}`)
+              .notQuery('match_phrase', 'act.data', '"to": "snax.transf"');
+          });
+
           return q;
         });
 
