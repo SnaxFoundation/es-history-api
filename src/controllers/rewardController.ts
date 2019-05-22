@@ -1,10 +1,27 @@
 import * as bodybuilder from 'bodybuilder';
 import { Request, Response } from 'express';
 import elastic from '../lib/elastic';
+import logger from '../logger';
 
 export class RewardController {
   public getRewardsByAccount = async (req: Request, res: Response) => {
     const { body } = req;
+
+    logger
+      .child({ accountRewardsRequest: body })
+      .debug('Account rewards request');
+
+    if (!body.account_name) {
+      return res.status(500).send('account_name is required');
+    }
+
+    if (body.offset && !Number(body.offset)) {
+      return res.status(500).send('offset should be a number');
+    }
+
+    if (body.pos && !Number(body.pos)) {
+      return res.status(500).send('pos should be a number');
+    }
 
     const query: any = this.createQuery(body);
 
@@ -32,6 +49,14 @@ export class RewardController {
 
       res.send(result);
     } catch (error) {
+      logger
+        .child({
+          accountRewardError: {
+            errorMessage: JSON.stringify(error),
+            ...body,
+          },
+        })
+        .debug('Account rewards error');
       res.status(500).send(error);
     }
   };
@@ -39,8 +64,6 @@ export class RewardController {
   private createQuery({ platform, account_name, pos = -1, offset = -20 }) {
     const order = offset >= 0 ? 'asc' : 'desc';
     const size = Math.abs(offset);
-
-    const platformId = 'p.twitter';
 
     const query = bodybuilder()
       .size(size)

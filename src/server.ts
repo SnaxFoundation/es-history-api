@@ -1,14 +1,19 @@
+import { createExpressLogger } from '@snaxfoundation/snax-pino-logger';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cors from 'cors';
 import * as express from 'express';
-import * as morgan from 'morgan';
 import { config } from './config';
+import logger from './logger';
 import router from './routes';
+
+const expressLogger = createExpressLogger({
+  logger,
+});
 
 const app = express();
 
-app.use(morgan('common'));
+app.use(expressLogger);
 app.use(bodyParser.text());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -36,6 +41,5 @@ app.use((req, res, next) => {
 app.use(router);
 
 app.listen(config.server.port, () => {
-  // tslint:disable-next-line:no-console
-  console.log(`Listening ${config.server.host}:${config.server.port}`);
+  logger.info(`Listening ${config.server.host}:${config.server.port}`);
 });

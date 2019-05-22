@@ -1,23 +1,25 @@
 import { Request, Response } from 'express';
 import elastic from '../lib/elastic';
+import logger from '../logger';
 
 export class AccountActionsController {
   public getActions = async (req: Request, res: Response) => {
     const { body } = req;
 
+    logger
+      .child({ accountActionsRequest: body })
+      .debug('Account actions request');
+
     if (!body.account_name) {
-      res.status(500).send('account_name is required');
-      return;
+      return res.status(500).send('account_name is required');
     }
 
     if (body.offset && !Number(body.offset)) {
-      res.status(500).send('offset should be a number');
-      return;
+      return res.status(500).send('offset should be a number');
     }
 
     if (body.pos && !Number(body.pos)) {
-      res.status(500).send('pos should be a number');
-      return;
+      return res.status(500).send('pos should be a number');
     }
 
     const query: any = this.createQuery(body);
@@ -43,6 +45,11 @@ export class AccountActionsController {
 
       res.send(result);
     } catch (error) {
+      logger
+        .child({
+          accountActionsError: { errorMessage: JSON.stringify(error), ...body },
+        })
+        .error('Account actions error');
       res.status(500).send(error);
     }
   };

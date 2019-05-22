@@ -1,5 +1,6 @@
 import * as bodybuilder from 'bodybuilder';
 import { Request, Response } from 'express';
+import logger from '../logger';
 
 import elastic from '../lib/elastic';
 
@@ -7,9 +8,12 @@ export class ControlledAccountsController {
   public getControlledAccounts = async (req: Request, res: Response) => {
     const { body } = req;
 
+    logger
+      .child({ controlledAccountsRequest: body })
+      .debug('Controlled accounts request');
+
     if (!body.controlling_account) {
-      res.status(500).send('controlling_account is required');
-      return;
+      return res.status(500).send('controlling_account is required');
     }
 
     const query: any = this.createQuery(body);
@@ -28,6 +32,14 @@ export class ControlledAccountsController {
 
       res.send(result);
     } catch (error) {
+      logger
+        .child({
+          controlledAccountsError: {
+            errorMessage: JSON.stringify(error),
+            ...body,
+          },
+        })
+        .error('Controlled accounts error');
       res.status(500).send(error);
     }
   };
