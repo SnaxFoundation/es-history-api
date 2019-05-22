@@ -2,14 +2,16 @@ import * as bodybuilder from 'bodybuilder';
 import { Request, Response } from 'express';
 
 import elastic from '../lib/elastic';
+import logger from '../logger';
 
 export class TransactionController {
   public getTransaction = async (req: Request, res: Response) => {
     const { body } = req;
 
+    logger.child({ transactionRequest: body }).debug('Transaction request');
+
     if (!body.id) {
-      res.status(500).send('id is required');
-      return;
+      return res.status(500).send('id is required');
     }
 
     const query: any = this.createQuery(body);
@@ -18,8 +20,7 @@ export class TransactionController {
       const elasticResponse = await elastic.search(query);
 
       if (!elasticResponse.hits.hits) {
-        res.status(500).send('Invalid transaction ID');
-        return;
+        return res.status(500).send('Invalid transaction ID');
       }
 
       const source: any = elasticResponse.hits.hits[0]._source;
@@ -36,6 +37,14 @@ export class TransactionController {
 
       res.send(data);
     } catch (error) {
+      logger
+        .child({
+          transactionError: {
+            errorMessage: JSON.stringify(error),
+            ...body,
+          },
+        })
+        .debug('Transaction error');
       res.status(500).send(error);
     }
   };

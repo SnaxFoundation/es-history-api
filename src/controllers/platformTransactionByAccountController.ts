@@ -1,24 +1,29 @@
 import * as bodybuilder from 'bodybuilder';
 import { Request, Response } from 'express';
+import logger from '../logger';
+
 import elastic from '../lib/elastic';
 
 export class PlatformTransactionByAccountController {
   public getActions = async (req: Request, res: Response) => {
     const { body } = req;
 
+    logger
+      .child({ platformTransactionsRequest: body })
+      .debug('Platform transactions request');
+
     if (!body.platform) {
-      res.status(400).send('Platform is required');
-      return;
+      return res.status(400).send('Platform is required');
     }
 
     if (Object.keys(body.platform).length !== 1) {
-      res.status(400).send('Platform can contain only one platform key-id');
-      return;
+      return res
+        .status(400)
+        .send('Platform can contain only one platform key-id');
     }
 
     if (!Object.keys(body.platform).map(key => body.platform[key].id)[0]) {
-      res.status(400).send('id in platform object is required');
-      return;
+      return res.status(400).send('id in platform object is required');
     }
 
     const query: any = this.createQuery(body);
@@ -47,6 +52,14 @@ export class PlatformTransactionByAccountController {
 
       res.send(result);
     } catch (error) {
+      logger
+        .child({
+          platformTransactionsError: {
+            errorMessage: JSON.stringify(error),
+            ...body,
+          },
+        })
+        .debug('Platform transactions request');
       res.status(500).send(error);
     }
   };

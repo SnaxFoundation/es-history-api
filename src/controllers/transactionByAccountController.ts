@@ -1,10 +1,27 @@
 import * as bodybuilder from 'bodybuilder';
 import { Request, Response } from 'express';
 import elastic from '../lib/elastic';
+import logger from '../logger';
 
 export class TransactionByAccountController {
   public getActions = async (req: Request, res: Response) => {
     const { body } = req;
+
+    logger
+      .child({ transactionsByAccountRequest: body })
+      .debug('Transactions by account request');
+
+    if (!body.account_name) {
+      return res.status(500).send('account_name is required');
+    }
+
+    if (body.offset && !Number(body.offset)) {
+      return res.status(500).send('offset should be a number');
+    }
+
+    if (body.pos && !Number(body.pos)) {
+      return res.status(500).send('pos should be a number');
+    }
 
     const query: any = this.createQuery(body);
 
@@ -57,6 +74,15 @@ export class TransactionByAccountController {
 
       res.send(result);
     } catch (error) {
+      logger
+        .child({
+          transactionsByAccountError: {
+            errorMessage: JSON.stringify(error),
+            ...body,
+          },
+        })
+        .debug('Transactions by account error');
+
       res.status(500).send(error);
     }
   };
