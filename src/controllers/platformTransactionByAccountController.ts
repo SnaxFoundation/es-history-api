@@ -120,7 +120,12 @@ export class PlatformTransactionByAccountController {
                             'act.authorization.actor',
                             'snax.airdrop'
                           );
-                        });
+                        })
+                        .query(
+                          'match_phrase',
+                          'act.data',
+                          `"memo": ${platformId}`
+                        );
                     });
                 })
                 .query('nested', { path: 'receipt' }, q => {
