@@ -124,23 +124,7 @@ export class PlatformTransactionByAccountController {
                         .query(
                           'match_phrase',
                           'act.data',
-                          `"memo": ${platformId}`
-                        );
-                    })
-                    .orQuery('nested', { path: 'act' }, q => {
-                      return q
-                        .query('match', 'act.name', 'transfer')
-                        .query('nested', { path: 'act.authorization' }, q => {
-                          return q.query(
-                            'match',
-                            'act.authorization.actor',
-                            'snax.airdrop'
-                          );
-                        })
-                        .query(
-                          'match',
-                          'act.data',
-                          `"memo": "airdrop payment"`
+                          `"memo": airdrop payment for platform ${platformId}`
                         );
                     });
                 })
