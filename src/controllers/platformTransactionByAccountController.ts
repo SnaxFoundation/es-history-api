@@ -137,7 +137,7 @@ export class PlatformTransactionByAccountController {
                             'snax.airdrop'
                           );
                         })
-                        .query('match_phrase', 'act.data', `"memo": ""`);
+                        .query('match', 'act.data', `"memo": ""`);
                     });
                 })
                 .query('nested', { path: 'receipt' }, q => {
