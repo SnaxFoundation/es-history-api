@@ -48,7 +48,8 @@ export class TransactionByAccountController {
         .filter(
           trxDoc =>
             trxDoc.action_trace.receipt.receiver === 'p.twitter' ||
-            trxDoc.action_trace.receipt.receiver === 'p.steemit'
+            trxDoc.action_trace.receipt.receiver === 'p.steemit' ||
+            trxDoc.action_trace.receipt.receiver === 'bettoken'
         )
         .map(trxDoc => trxDoc.action_trace.trx_id);
 
@@ -58,7 +59,8 @@ export class TransactionByAccountController {
         if (
           socialTrxIds.includes(trxId) &&
           trxDoc.action_trace.receipt.receiver !== 'p.twitter' &&
-          trxDoc.action_trace.receipt.receiver !== 'p.steemit'
+          trxDoc.action_trace.receipt.receiver !== 'p.steemit' &&
+          trxDoc.action_trace.receipt.receiver !== 'bettoken'
         ) {
           return;
         } else {
