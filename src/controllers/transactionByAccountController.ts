@@ -1,5 +1,6 @@
 import * as bodybuilder from 'bodybuilder';
 import { Request, Response } from 'express';
+import { config } from '../config';
 import elastic from '../lib/elastic';
 import logger from '../logger';
 
@@ -44,23 +45,24 @@ export class TransactionByAccountController {
       // as soon as the only only way to distinguish social trx and snax trx is memo
       // and we can't use it. We should manually remove dublicates
 
-      const socialTrxIds = data
-        .filter(
-          trxDoc =>
-            trxDoc.action_trace.receipt.receiver === 'p.twitter' ||
-            trxDoc.action_trace.receipt.receiver === 'p.steemit' ||
-            trxDoc.action_trace.receipt.receiver === 'bettoken'
-        )
+      const maybeDuplicateTrxIds = data
+        .filter(trxDoc => {
+          const filter = config.manualFilterAccounts.map(
+            name => trxDoc.action_trace.receipt.receiver === name
+          );
+
+          return filter.find(Boolean);
+        })
         .map(trxDoc => trxDoc.action_trace.trx_id);
 
       const finalData = data.filter(trxDoc => {
         const trxId = trxDoc.action_trace.trx_id;
 
         if (
-          socialTrxIds.includes(trxId) &&
-          trxDoc.action_trace.receipt.receiver !== 'p.twitter' &&
-          trxDoc.action_trace.receipt.receiver !== 'p.steemit' &&
-          trxDoc.action_trace.receipt.receiver !== 'bettoken'
+          maybeDuplicateTrxIds.includes(trxId) &&
+          config.manualFilterAccounts
+            .map(name => trxDoc.action_trace.receipt.receiver !== name)
+            .every(Boolean)
         ) {
           return;
         } else {
