@@ -45,14 +45,32 @@ export class TransactionByAccountController {
       // as soon as the only only way to distinguish social trx and snax trx is memo
       // and we can't use it. We should manually remove dublicates
 
-      const maybeDuplicateTrxIds = data
-        .filter(trxDoc => {
-          const filter = config.manualFilterAccounts.map(
-            name => trxDoc.action_trace.receipt.receiver === name
-          );
+      // const maybeDuplicateTrxIds = data
+      //   .filter(trxDoc => {
+      //     const filter = config.manualFilterAccounts.map(
+      //       name => trxDoc.action_trace.receipt.receiver === name
+      //     );
 
-          return filter.find(Boolean);
-        })
+      //     return filter.find(Boolean);
+      //   })
+      //   .map(trxDoc => trxDoc.action_trace.trx_id);
+
+      // const finalData = data.filter(trxDoc => {
+      //   const trxId = trxDoc.action_trace.trx_id;
+
+      //   if (
+      //     maybeDuplicateTrxIds.includes(trxId) &&
+      //     config.manualFilterAccounts
+      //       .map(name => trxDoc.action_trace.receipt.receiver !== name)
+      //       .every(Boolean)
+      //   ) {
+      //     return;
+      //   } else {
+      //     return trxId;
+      //   }
+      // });
+      const maybeDuplicateTrxIds = data
+        .filter(trxDoc => trxDoc.action_trace.receipt.receiver === 'snax')
         .map(trxDoc => trxDoc.action_trace.trx_id);
 
       const finalData = data.filter(trxDoc => {
@@ -60,9 +78,7 @@ export class TransactionByAccountController {
 
         if (
           maybeDuplicateTrxIds.includes(trxId) &&
-          config.manualFilterAccounts
-            .map(name => trxDoc.action_trace.receipt.receiver !== name)
-            .every(Boolean)
+          trxDoc.action_trace.receipt.receiver !== 'snax'
         ) {
           return;
         } else {
