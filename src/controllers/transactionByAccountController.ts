@@ -70,7 +70,7 @@ export class TransactionByAccountController {
       //   }
       // });
       const maybeDuplicateTrxIds = data
-        .filter(trxDoc => trxDoc.action_trace.receipt.receiver === 'snax')
+        .filter(trxDoc => trxDoc.action_trace.receipt.receiver !== 'snax')
         .map(trxDoc => trxDoc.action_trace.trx_id);
 
       const finalData = data.filter(trxDoc => {
