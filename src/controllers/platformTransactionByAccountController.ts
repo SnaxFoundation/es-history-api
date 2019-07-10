@@ -121,11 +121,19 @@ export class PlatformTransactionByAccountController {
                             'snax.airdrop'
                           );
                         })
-                        .query(
-                          'match_phrase',
-                          'act.data',
-                          `"memo": airdrop payment for platform ${platformId}`
-                        );
+                        .query('bool', q => {
+                          q.orQuery(
+                            'match_phrase',
+                            'act.data',
+                            `"memo": airdrop payment for platform ${platformId}`
+                          );
+                          q.query(
+                            'match_phrase',
+                            'act.data',
+                            `"memo": airdrop payment`
+                          );
+                          return query;
+                        });
                     });
                 })
                 .query('nested', { path: 'receipt' }, q => {
