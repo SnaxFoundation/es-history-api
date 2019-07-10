@@ -49,6 +49,8 @@ Running `index-tempate.sh` script to create or delete indice templates.
 
 `ELASTIC_PORT` - elasticsearch port. Default is `9200`
 
+`MANUAL_FILTER_ACCOUNTS` - specify accounts with possible trx duplicates. Should be comma separated values. Default is `p.twitter,p.steemit`
+
 ### Usage
 
 #### /v1/history/get_actions

@@ -5,6 +5,14 @@ import loadDotenv from './dotenv';
 
 loadDotenv();
 
+const extractArrayValues = env => {
+  if (!env) {
+    return null;
+  }
+
+  return env.replace(/ /g, '').split(',');
+};
+
 const ROOT: string = path.resolve(__dirname, '../');
 
 export const config = {
@@ -21,4 +29,8 @@ export const config = {
     port: _.defaultTo(parseInt(process.env.PORT, 10), 3000),
     root: ROOT,
   },
+  manualFilterAccounts: _.defaultTo(
+    extractArrayValues(process.env.MANUAL_FILTER_ACCOUNTS),
+    ['p.twitter', 'p.steemit']
+  ),
 };
