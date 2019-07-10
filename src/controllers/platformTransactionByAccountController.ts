@@ -121,19 +121,27 @@ export class PlatformTransactionByAccountController {
                             'snax.airdrop'
                           );
                         })
-                        .query('bool', q => {
-                          q.orQuery(
-                            'match_phrase',
-                            'act.data',
-                            `"memo": airdrop payment for platform ${platformId}`
+                        .query(
+                          'match_phrase',
+                          'act.data',
+                          `"memo": airdrop payment for platform ${platformId}`
+                        );
+                    })
+                    .orQuery('nested', { path: 'act' }, q => {
+                      return q
+                        .query('match', 'act.name', 'transfer')
+                        .query('nested', { path: 'act.authorization' }, q => {
+                          return q.query(
+                            'match',
+                            'act.authorization.actor',
+                            'snax.airdrop'
                           );
-                          q.query(
-                            'match_phrase',
-                            'act.data',
-                            `"memo": airdrop payment`
-                          );
-                          return query;
-                        });
+                        })
+                        .query(
+                          'match_phrase',
+                          'act.data',
+                          `"memo": airdrop payment`
+                        );
                     });
                 })
                 .query('nested', { path: 'receipt' }, q => {
