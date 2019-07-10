@@ -45,30 +45,18 @@ export class TransactionByAccountController {
       // as soon as the only only way to distinguish social trx and snax trx is memo
       // and we can't use it. We should manually remove dublicates
 
-      const maybeDuplicateTrxIds = data
-        .filter(trxDoc => {
-          const filter = config.manualFilterAccounts.map(
-            name => trxDoc.action_trace.receipt.receiver === name
-          );
+      const maybeDuplicateTrxIds = new Set();
 
-          return filter.find(Boolean);
+      const finalData = data
+        .filter(trxDoc => {
+          if (trxDoc.action_trace.receipt.receiver !== 'snax') {
+            if (!maybeDuplicateTrxIds.has(trxDoc.action_trace.trx_id)) {
+              maybeDuplicateTrxIds.add(trxDoc.action_trace.trx_id);
+              return true;
+            }
+          }
         })
         .map(trxDoc => trxDoc.action_trace.trx_id);
-
-      const finalData = data.filter(trxDoc => {
-        const trxId = trxDoc.action_trace.trx_id;
-
-        if (
-          maybeDuplicateTrxIds.includes(trxId) &&
-          config.manualFilterAccounts
-            .map(name => trxDoc.action_trace.receipt.receiver !== name)
-            .every(Boolean)
-        ) {
-          return;
-        } else {
-          return trxId;
-        }
-      });
 
       const result = {
         actions: finalData,
