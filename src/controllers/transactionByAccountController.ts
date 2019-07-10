@@ -76,7 +76,10 @@ export class TransactionByAccountController {
       const finalData = data.filter(trxDoc => {
         const trxId = trxDoc.action_trace.trx_id;
 
-        if (maybeDuplicateTrxIds.includes(trxId)) {
+        if (
+          maybeDuplicateTrxIds.includes(trxId) &&
+          trxDoc.action_trace.receipt.receiver !== 'snax'
+        ) {
           return;
         } else {
           return trxId;
