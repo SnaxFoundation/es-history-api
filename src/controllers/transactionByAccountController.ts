@@ -47,16 +47,14 @@ export class TransactionByAccountController {
 
       const maybeDuplicateTrxIds = new Set();
 
-      const finalData = data
-        .filter(trxDoc => {
-          if (trxDoc.action_trace.receipt.receiver !== 'snax') {
-            if (!maybeDuplicateTrxIds.has(trxDoc.action_trace.trx_id)) {
-              maybeDuplicateTrxIds.add(trxDoc.action_trace.trx_id);
-              return true;
-            }
+      const finalData = data.filter(trxDoc => {
+        if (trxDoc.action_trace.receipt.receiver !== 'snax') {
+          if (!maybeDuplicateTrxIds.has(trxDoc.action_trace.trx_id)) {
+            maybeDuplicateTrxIds.add(trxDoc.action_trace.trx_id);
+            return true;
           }
-        })
-        .map(trxDoc => trxDoc.action_trace.trx_id);
+        }
+      });
 
       const result = {
         actions: finalData,
