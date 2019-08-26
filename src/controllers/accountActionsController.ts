@@ -76,9 +76,7 @@ export class AccountActionsController {
                 bool: {
                   should: [
                     {
-                      
-                        path: 'act',
-                        query: {
+
                           nested: {
                             path: 'act.authorization',
                             query: {
@@ -93,7 +91,7 @@ export class AccountActionsController {
                               },
                             },
                           },
-                        },
+
      
                     },
                     {
